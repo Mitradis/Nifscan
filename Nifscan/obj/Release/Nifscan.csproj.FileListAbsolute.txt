@@ -1,0 +1,11 @@
+C:\Build\Nifscan\Nifscan\bin\Release\Nifscan.exe.config
+C:\Build\Nifscan\Nifscan\bin\Release\Nifscan.exe
+C:\Build\Nifscan\Nifscan\bin\Release\Nifscan.pdb
+C:\Build\Nifscan\Nifscan\obj\Release\Nifscan.FormEC.resources
+C:\Build\Nifscan\Nifscan\obj\Release\Nifscan.FormMain.resources
+C:\Build\Nifscan\Nifscan\obj\Release\Nifscan.FormVer.resources
+C:\Build\Nifscan\Nifscan\obj\Release\Nifscan.FormParallax.resources
+C:\Build\Nifscan\Nifscan\obj\Release\Nifscan.FormVC.resources
+C:\Build\Nifscan\Nifscan\obj\Release\Nifscan.csproj.GenerateResource.Cache
+C:\Build\Nifscan\Nifscan\obj\Release\Nifscan.exe
+C:\Build\Nifscan\Nifscan\obj\Release\Nifscan.pdb
