@@ -123,11 +123,14 @@ namespace Nifscan
                     }
                     if (self && master)
                     {
-                        int count = listID.Count;
-                        int index = listID.FindIndex(0, count, b => b[0] == load && b[1] == bytesFile[i + 14] && b[2] == bytesFile[i + 13] && b[3] == bytesFile[i + 12]);
-                        if (index != -1)
+                        if (checkBox1.Checked && (!checkBox2.Checked || (checkBox2.Checked && !master)))
                         {
-                            MessageBox.Show("Double FornID: " + Convert.ToChar(bytesFile[i]).ToString() + Convert.ToChar(bytesFile[i + 1]).ToString() + Convert.ToChar(bytesFile[i + 2]).ToString() + Convert.ToChar(bytesFile[i + 3]).ToString() + " " + load.ToString("X2") + bytesFile[i + 14].ToString("X2") + bytesFile[i + 13].ToString("X2") + bytesFile[i + 12].ToString("X2") + " at: " + (i + 14).ToString());
+                            int count = listID.Count;
+                            int index = listID.FindIndex(0, count, b => b[0] == load && b[1] == bytesFile[i + 14] && b[2] == bytesFile[i + 13] && b[3] == bytesFile[i + 12]);
+                            if (index != -1)
+                            {
+                                MessageBox.Show("Double FornID: " + Convert.ToChar(bytesFile[i]).ToString() + Convert.ToChar(bytesFile[i + 1]).ToString() + Convert.ToChar(bytesFile[i + 2]).ToString() + Convert.ToChar(bytesFile[i + 3]).ToString() + " " + load.ToString("X2") + bytesFile[i + 14].ToString("X2") + bytesFile[i + 13].ToString("X2") + bytesFile[i + 12].ToString("X2") + " at: " + (i + 14).ToString());
+                            }
                         }
                         listID.Add(new List<byte> { load, bytesFile[i + 14], bytesFile[i + 13], bytesFile[i + 12] });
                         listData.Add(new List<byte>() { bytesFile[i + 22], bytesFile[i + 23] });
