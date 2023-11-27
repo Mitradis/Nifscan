@@ -82,9 +82,9 @@ namespace Nifscan
             byte[] bytesFile = File.ReadAllBytes(file);
             int fileSize = bytesFile.Length;
             bool write = false;
-            for (int i = 0; i + 27 < fileSize; i++)
+            for (int i = 46; i + 27 < fileSize; i++)
             {
-                if (bytesFile[i] >= 65 && bytesFile[i] <= 95 && bytesFile[i + 1] >= 65 && bytesFile[i + 1] <= 95 && bytesFile[i + 2] >= 65 && bytesFile[i + 2] <= 95 && bytesFile[i + 3] >= 65 && bytesFile[i + 3] <= 95 && bytesFile[i + 20] >= 14 && bytesFile[i + 20] <= 43 && bytesFile[i + 21] == 0 && ((bytesFile[i + 24] >= 65 && bytesFile[i + 24] <= 95 && bytesFile[i + 25] >= 65 && bytesFile[i + 25] <= 95 && bytesFile[i + 26] >= 65 && bytesFile[i + 26] <= 95 && bytesFile[i + 27] >= 65 && bytesFile[i + 27] <= 95) || BitConverter.ToUInt32(bytesFile, i + 8) >> 18 >= 1) && groupNames.FindIndex(0, gcount, b => b[0] == bytesFile[i] && b[1] == bytesFile[i + 1] && b[2] == bytesFile[i + 2] && b[3] == bytesFile[i + 3]) >= 0)
+                if (bytesFile[i - 8] != 71 && bytesFile[i - 7] != 82 && bytesFile[i - 6] != 85 && bytesFile[i - 5] != 80 && bytesFile[i] >= 65 && bytesFile[i] <= 95 && bytesFile[i + 1] >= 65 && bytesFile[i + 1] <= 95 && bytesFile[i + 2] >= 65 && bytesFile[i + 2] <= 95 && bytesFile[i + 3] >= 65 && bytesFile[i + 3] <= 95 && bytesFile[i + 20] >= 14 && bytesFile[i + 20] <= 43 && bytesFile[i + 21] == 0 && ((bytesFile[i + 24] >= 65 && bytesFile[i + 24] <= 95 && bytesFile[i + 25] >= 65 && bytesFile[i + 25] <= 95 && bytesFile[i + 26] >= 65 && bytesFile[i + 26] <= 95 && bytesFile[i + 27] >= 65 && bytesFile[i + 27] <= 95) || BitConverter.ToUInt32(bytesFile, i + 8) >> 18 >= 1) && groupNames.FindIndex(0, gcount, b => b[0] == bytesFile[i] && b[1] == bytesFile[i + 1] && b[2] == bytesFile[i + 2] && b[3] == bytesFile[i + 3]) >= 0)
                 {
                     bool self = bytesFile[i + 15] >= headMasters.Count;
                     if (!self)
@@ -123,6 +123,12 @@ namespace Nifscan
                     }
                     if (self && master)
                     {
+                        int count = listID.Count;
+                        int index = listID.FindIndex(0, count, b => b[0] == load && b[1] == bytesFile[i + 14] && b[2] == bytesFile[i + 13] && b[3] == bytesFile[i + 12]);
+                        if (index != -1)
+                        {
+                            MessageBox.Show("Double FornID: " + Convert.ToChar(bytesFile[i]).ToString() + Convert.ToChar(bytesFile[i + 1]).ToString() + Convert.ToChar(bytesFile[i + 2]).ToString() + Convert.ToChar(bytesFile[i + 3]).ToString() + " " + load.ToString("X2") + bytesFile[i + 14].ToString("X2") + bytesFile[i + 13].ToString("X2") + bytesFile[i + 12].ToString("X2") + " at: " + (i + 14).ToString());
+                        }
                         listID.Add(new List<byte> { load, bytesFile[i + 14], bytesFile[i + 13], bytesFile[i + 12] });
                         listData.Add(new List<byte>() { bytesFile[i + 22], bytesFile[i + 23] });
                         listMasters.Add(name);
