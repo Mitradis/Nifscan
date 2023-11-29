@@ -2233,13 +2233,6 @@ namespace Nifscan
             form = null;
         }
 
-        private void button8_Click(object sender, EventArgs e)
-        {
-            var form = new FormVersion();
-            form.ShowDialog();
-            form = null;
-        }
-
         public void buttonColor(int button, bool edit)
         {
             setColor(button == 3 ? button3 : button == 4 ? button4 : button == 5 ? button5 : button == 6 ? button6 : button7, edit);
