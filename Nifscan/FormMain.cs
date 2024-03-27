@@ -159,7 +159,7 @@ namespace Nifscan
             formMain = this;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        void button1_Click(object sender, EventArgs e)
         {
             if (tempPath == null)
             {
@@ -177,7 +177,7 @@ namespace Nifscan
             }
         }
 
-        private void button2_Click(object sender, System.EventArgs e)
+        void button2_Click(object sender, System.EventArgs e)
         {
             if (Directory.Exists(tempPath))
             {
@@ -194,7 +194,7 @@ namespace Nifscan
                     fileName = null;
                     fileChanged = false;
                 }
-                outLog.Insert(0, "TOTAL FOUND " + totalFiles.ToString() + " FILES, " + "SUCCESS PROCESSING " + successFiles.ToString() + " FILES");
+                outLog.Insert(0, "TOTAL FOUND " + totalFiles + " FILES, " + "SUCCESS PROCESSING " + successFiles + " FILES");
                 File.WriteAllLines(AppDomain.CurrentDomain.BaseDirectory + "NifScan.log", outLog, new UTF8Encoding(false));
                 outLog.Clear();
                 totalFiles = 0;
@@ -203,7 +203,7 @@ namespace Nifscan
             }
         }
 
-        private void currentFile(string path)
+        void currentFile(string path)
         {
             if (File.Exists(path))
             {
@@ -277,7 +277,7 @@ namespace Nifscan
                             while (length != 0)
                             {
                                 i++;
-                                word += Convert.ToChar(bytesFile[i]).ToString();
+                                word += Convert.ToChar(bytesFile[i]);
                                 length--;
                             }
                             blocksTypesList.Add(word);
@@ -328,7 +328,7 @@ namespace Nifscan
                             while (length != 0)
                             {
                                 i++;
-                                word += Convert.ToChar(bytesFile[i]).ToString();
+                                word += Convert.ToChar(bytesFile[i]);
                                 length--;
                             }
                             stringsList.Add(word);
@@ -376,7 +376,7 @@ namespace Nifscan
                                 outLog.Add("BLOCKS LIST:");
                                 for (int l = 0; l < blocksNamesList.Count; l++)
                                 {
-                                    outLog.Add(blocksNamesList[l] + " START: " + blocksStartList[l].ToString() + " SIZE: " + blocksSizeList[l]);
+                                    outLog.Add(blocksNamesList[l] + " START: " + blocksStartList[l] + " SIZE: " + blocksSizeList[l]);
 
                                 }
                                 outLog.Add("");
@@ -415,7 +415,7 @@ namespace Nifscan
                         if (blocksNamesList[i] == "BSXFlags")
                         {
                             int flag = (int)BitConverter.ToUInt32(bytesFile, realBlockStart + 4);
-                            outLog.Add("Have BSXFlags: " + flag.ToString() + " " + fileName);
+                            outLog.Add("Have BSXFlags: " + flag + " " + fileName);
                             numBSX++;
                         }
                         else if (blocksNamesList[i] == "BSFadeNode")
@@ -587,11 +587,11 @@ namespace Nifscan
                             {
                                 if (bytesFile[realBlockStart + 4] != bytesFile[realBlockStart + 36])
                                 {
-                                    outLog.Add("WARNING! COLLISION LAYERS NOT MATCH: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                    outLog.Add("WARNING! COLLISION LAYERS NOT MATCH: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                 }
                                 if (BitConverter.ToSingle(bytesFile, realBlockStart + 192) != 1 || BitConverter.ToSingle(bytesFile, realBlockStart + 196) != 1)
                                 {
-                                    outLog.Add("WARNING! COLLISION FACTORS NOT EQUAL ONE: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                    outLog.Add("WARNING! COLLISION FACTORS NOT EQUAL ONE: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                 }
                             }
                             if (blocksNamesList[i] == "bhkConvexVerticesShape")
@@ -618,7 +618,7 @@ namespace Nifscan
                                 }
                                 if (zero)
                                 {
-                                    outLog.Add("WARNING! ALL COLLISION NORMALS EQUAL ZERO: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                    outLog.Add("WARNING! ALL COLLISION NORMALS EQUAL ZERO: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                 }
                             }
                             if (checkBox2.Checked || checkBox5.Checked)
@@ -682,17 +682,17 @@ namespace Nifscan
                             {
                                 if ((dataBlock != -1 && blocksNamesList[dataBlock] != "NiTriShapeData" && blocksNamesList[dataBlock] != "NiTriStripsData") || (skinBlock != -1 && blocksNamesList[skinBlock] != "NiSkinInstance" && blocksNamesList[skinBlock] != "BSDismemberSkinInstance") || (shaderBlock != -1 && blocksNamesList[shaderBlock] != "BSLightingShaderProperty" && blocksNamesList[shaderBlock] != "BSEffectShaderProperty" && blocksNamesList[shaderBlock] != "BSWaterShaderProperty" && blocksNamesList[shaderBlock] != "BSSkyShaderProperty") || (alphaBlock != -1 && blocksNamesList[alphaBlock] != "NiAlphaProperty"))
                                 {
-                                    outLog.Add("WARNING! INCORRECT BLOCKS LINKS: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                    outLog.Add("WARNING! INCORRECT BLOCKS LINKS: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                 }
                                 if (dataBlock != -1)
                                 {
                                     if ((i + 1 + extraBlocks) != dataBlock)
                                     {
-                                        outLog.Add("WARNING! NEED REORDER: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                        outLog.Add("WARNING! NEED REORDER: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                     }
                                     if (blocksNamesList[dataBlock] == "NiTriStripsData")
                                     {
-                                        outLog.Add("WARNING! MESH HAVE NITRISTRIPSDATA: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                        outLog.Add("WARNING! MESH HAVE NITRISTRIPSDATA: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                     }
                                     if (blocksNamesList[dataBlock] == "NiTriShapeData")
                                     {
@@ -701,7 +701,7 @@ namespace Nifscan
                                         numVertices = BitConverter.ToUInt16(bytesFile, jump3);
                                         if (numVertices >= 65536)
                                         {
-                                            outLog.Add("WARNING! OUT OF RANGE MAX VERTICES: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                            outLog.Add("WARNING! OUT OF RANGE MAX VERTICES: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                         }
                                         jump3 += 4;
                                         if (bytesFile[jump3] == 1 && (verTrim || verX || verY || verZ))
@@ -773,7 +773,7 @@ namespace Nifscan
                                         }
                                         if (shaderBlock != -1 && ((hasTangents && !hasNormals) || (!hasTangents && hasNormals)))
                                         {
-                                            outLog.Add("WARNING! TANGENTS NOT WORK: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                            outLog.Add("WARNING! TANGENTS NOT WORK: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                         }
                                         jump3 += 17;
                                         if (bytesFile[jump3] == 1)
@@ -851,15 +851,15 @@ namespace Nifscan
                                         int numTriangles = BitConverter.ToUInt16(bytesFile, jump3 + 6);
                                         if (numTriangles >= 65536)
                                         {
-                                            outLog.Add("WARNING! OUT OF RANGE MAX TRIANGLES: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                            outLog.Add("WARNING! OUT OF RANGE MAX TRIANGLES: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                         }
                                         if (numVertices > 0 && numTriangles < 1)
                                         {
-                                            outLog.Add("WARNING! NO TRIANGLES: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                            outLog.Add("WARNING! NO TRIANGLES: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                         }
                                         if (blocksNamesList[i] == "BSLODTriShape" && numTriangles < lods)
                                         {
-                                            outLog.Add("WARNING! LODS MORE TRIANGLES: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                            outLog.Add("WARNING! LODS MORE TRIANGLES: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                         }
                                         jump3 = jump3 + 12;
                                         if (bytesFile[jump3] == 1)
@@ -878,19 +878,19 @@ namespace Nifscan
                                         }
                                         if ((realBlockStart + blocksSizeList[dataBlock]) != jump3)
                                         {
-                                            outLog.Add("WARNING! ERROR PARS: " + blocksNamesList[dataBlock] + " (" + dataBlock.ToString() + ") " + fileName);
+                                            outLog.Add("WARNING! ERROR PARS: " + blocksNamesList[dataBlock] + " (" + dataBlock + ") " + fileName);
                                         }
                                     }
                                 }
                                 else
                                 {
-                                    outLog.Add("WARNING! NO DATA: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                    outLog.Add("WARNING! NO DATA: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                 }
                                 if (shaderBlock != -1 && blocksNamesList[shaderBlock] == "BSLightingShaderProperty")
                                 {
                                     if (i > shaderBlock || (dataBlock != -1 && dataBlock > shaderBlock))
                                     {
-                                        outLog.Add("WARNING! NEED REORDER: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                        outLog.Add("WARNING! NEED REORDER: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                     }
                                     realBlockStart = blocksStartList[shaderBlock];
                                     int jump3 = realBlockStart + 16 + ((int)BitConverter.ToUInt32(bytesFile, realBlockStart + 8) * 4);
@@ -924,7 +924,7 @@ namespace Nifscan
                                             int num = (int)BitConverter.ToUInt32(bytesFile, jump4);
                                             if (num != 9)
                                             {
-                                                outLog.Add("WARNING! COUNT OF TEXTURES: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                                outLog.Add("WARNING! COUNT OF TEXTURES: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                             }
                                             jump4 += 4;
                                             if (debugMode)
@@ -939,7 +939,7 @@ namespace Nifscan
                                                 string word = null;
                                                 while (length != 0)
                                                 {
-                                                    word += Convert.ToChar(bytesFile[jump4]).ToString();
+                                                    word += Convert.ToChar(bytesFile[jump4]);
                                                     jump4++;
                                                     length--;
                                                 }
@@ -982,7 +982,7 @@ namespace Nifscan
                                                     {
                                                         if (parallaxCompare && !word.Remove(word.Length - 6).Equals(normal.Remove(normal.Length - 6), StringComparison.OrdinalIgnoreCase))
                                                         {
-                                                            outLog.Add("WARNING! _P TEXTURE NOT EQUAL _N: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                                            outLog.Add("WARNING! _P TEXTURE NOT EQUAL _N: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                                         }
                                                         hasPTexture = true;
                                                     }
@@ -992,7 +992,7 @@ namespace Nifscan
                                                     }
                                                     if (debugMode)
                                                     {
-                                                        outLog.Add((j + 1).ToString() + " " + word);
+                                                        outLog.Add((j + 1) + " " + word);
                                                     }
                                                 }
                                             }
@@ -1023,7 +1023,7 @@ namespace Nifscan
                                         }
                                         else if (((bytesFile[realBlockStart] == 3 && !hasParallaxFlag) || (bytesFile[realBlockStart] != 3 && hasParallaxFlag)) || ((bytesFile[realBlockStart] == 3 && hasParallaxFlag && (!hasPTexture || !hasVColors || !hasNormals || !hasTangents || skinBlock != -1))) || (hasPTexture && (bytesFile[realBlockStart] != 3 || !hasParallaxFlag)))
                                         {
-                                            outLog.Add("WARNING! PARALLAX NOT WORK: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                            outLog.Add("WARNING! PARALLAX NOT WORK: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                         }
                                         if (hasCastShadowFlag && ((checkEye || checkMouth) || (alphaBlock != -1 && hasDecalFlag)))
                                         {
@@ -1035,7 +1035,7 @@ namespace Nifscan
                                             }
                                             else
                                             {
-                                                outLog.Add("WARNING! UNNECESSARY CAST SHADOW FLAG: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                                outLog.Add("WARNING! UNNECESSARY CAST SHADOW FLAG: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                             }
                                         }
                                         if (hasVAlphaFlag && (!hasVColors || vaEmpty || (alphaBlock == -1 && !hasRefractionFlag)))
@@ -1048,7 +1048,7 @@ namespace Nifscan
                                             }
                                             else
                                             {
-                                                outLog.Add("WARNING! USELESS ALPHA FLAG IN TREE: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                                outLog.Add("WARNING! USELESS ALPHA FLAG IN TREE: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                             }
                                         }
                                         if ((checkBox6.Checked || checkBox7.Checked) && comboBox1.SelectedIndex != -1)
@@ -1095,11 +1095,11 @@ namespace Nifscan
                                         }
                                         if ((hasEnvMapFlag && bytesFile[realBlockStart] != 1) || (!hasEnvMapFlag && bytesFile[realBlockStart] == 1) || (hasEyeEnvMapFlag && bytesFile[realBlockStart] != 16) || (!hasEyeEnvMapFlag && bytesFile[realBlockStart] == 16))
                                         {
-                                            outLog.Add("WARNING! ENVIRONMENT MAP SHADER TYPE AND FLAG CONFLICT: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                            outLog.Add("WARNING! ENVIRONMENT MAP SHADER TYPE AND FLAG CONFLICT: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                         }
                                         if ((skinBlock != -1 && !hasSkinFlag) || (skinBlock == -1 && hasSkinFlag))
                                         {
-                                            outLog.Add("WARNING! SKIN IN TREE AND SKIN SHADER FLAG CONFLICT: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                            outLog.Add("WARNING! SKIN IN TREE AND SKIN SHADER FLAG CONFLICT: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                         }
                                         jump3 += 4;
                                         long shaderFlags2 = BitConverter.ToUInt32(bytesFile, jump3);
@@ -1129,11 +1129,11 @@ namespace Nifscan
                                         }
                                         if ((hasVCFlag && !hasVColors) || (!hasVCFlag && hasVColors))
                                         {
-                                            outLog.Add("WARNING! VERTEX COLORS FLAGS NOT MATCH: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                            outLog.Add("WARNING! VERTEX COLORS FLAGS NOT MATCH: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                         }
                                         if ((bytesFile[realBlockStart] == 2 && !hasGlowFlag) || (bytesFile[realBlockStart] != 2 && hasGlowFlag))
                                         {
-                                            outLog.Add("WARNING! GLOW TYPE SHADER NOT MATCH: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                            outLog.Add("WARNING! GLOW TYPE SHADER NOT MATCH: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                         }
                                         if (!hasSKTexture && hasSoftLightingFlag)
                                         {
@@ -1145,7 +1145,7 @@ namespace Nifscan
                                             }
                                             else
                                             {
-                                                outLog.Add("WARNING! HAS SOFTLIGHTING FLAG BUT TEXTURE NOT: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                                outLog.Add("WARNING! HAS SOFTLIGHTING FLAG BUT TEXTURE NOT: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                             }
                                         }
                                         if ((checkBox8.Checked || checkBox9.Checked) && comboBox2.SelectedIndex != -1)
@@ -1228,7 +1228,7 @@ namespace Nifscan
                                         {
                                             if (hasTangents || hasNormals || hasVColors || hasVCFlag)
                                             {
-                                                outLog.Add("WARNING! SKIN INCORRECT PARAMETERS: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                                outLog.Add("WARNING! SKIN INCORRECT PARAMETERS: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                             }
                                             if (checkBox10.Checked)
                                             {
@@ -1296,7 +1296,7 @@ namespace Nifscan
                                             float stren = BitConverter.ToSingle(bytesFile, jump3);
                                             if ((c1 < 0.1 && c2 < 0.1 && c3 < 0.1) || stren < 0.1)
                                             {
-                                                outLog.Add("WARNING! BLACK SPECULAR: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                                outLog.Add("WARNING! BLACK SPECULAR: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                             }
                                             jump3 += 8;
                                         }
@@ -1322,23 +1322,23 @@ namespace Nifscan
                                             jump3 += 4;
                                             if (BitConverter.ToSingle(bytesFile, jump3) < 0.1)
                                             {
-                                                outLog.Add("WARNING! ENVMAP NOT VISIBLE: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                                outLog.Add("WARNING! ENVMAP NOT VISIBLE: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                             }
                                         }
                                         if ((hasAnisotropicLightingFlag && !hasSpecular) || (!hasSpecular && hasSpaceNormalsFlag && hasSTexture) || (hasSpecular && hasSpaceNormalsFlag && !hasSTexture))
                                         {
-                                            outLog.Add("WARNING! SPECULAR PROBLEM: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                            outLog.Add("WARNING! SPECULAR PROBLEM: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                         }
                                     }
                                     else
                                     {
-                                        outLog.Add("WARNING! ERROR PARS: " + blocksNamesList[shaderBlock] + " (" + shaderBlock.ToString() + ") " + fileName);
+                                        outLog.Add("WARNING! ERROR PARS: " + blocksNamesList[shaderBlock] + " (" + shaderBlock + ") " + fileName);
                                     }
                                 }
                             }
                             else
                             {
-                                outLog.Add("WARNING! ERROR PARS: " + blocksNamesList[i] + " (" + i.ToString() + ") " + fileName);
+                                outLog.Add("WARNING! ERROR PARS: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                             }
                         }
                     }
@@ -1364,7 +1364,7 @@ namespace Nifscan
             }
         }
 
-        private void verticesTrim(int jump, double value)
+        void verticesTrim(int jump, double value)
         {
             string premath = value.ToString();
             int index = premath.IndexOf(",");
@@ -1380,20 +1380,20 @@ namespace Nifscan
             }
         }
 
-        private void extraCheck(int start, int count, int blockIndex, string name)
+        void extraCheck(int start, int count, int blockIndex, string name)
         {
             for (int i = 0; i < count; i++)
             {
                 int extra = (int)BitConverter.ToUInt32(bytesFile, start);
                 if (extra < 0 || extra > blocksCount)
                 {
-                    outLog.Add("WARNING! EXTRA BLOCKS: " + name + " (" + blockIndex.ToString() + ") " + fileName);
+                    outLog.Add("WARNING! EXTRA BLOCKS: " + name + " (" + blockIndex + ") " + fileName);
                 }
                 start += 4;
             }
         }
 
-        private void sortBlocks(int blockStart, int jump, int childs, int blockSize, int blockEnd, int blockIndex, string name)
+        void sortBlocks(int blockStart, int jump, int childs, int blockSize, int blockEnd, int blockIndex, string name)
         {
             if (childs > 0)
             {
@@ -1410,12 +1410,12 @@ namespace Nifscan
                         if (child == -1)
                         {
                             childsList.Add(-1);
-                            outLog.Add("WARNING! NONE CHILDREN BLOCKS: " + name + " (" + blockIndex.ToString() + ") " + fileName);
+                            outLog.Add("WARNING! NONE CHILDREN BLOCKS: " + name + " (" + blockIndex + ") " + fileName);
                         }
                         else if (childsList.Contains(child))
                         {
                             childsList.Add(-1);
-                            outLog.Add("WARNING! DUB CHILDREN BLOCKS: " + name + " (" + blockIndex.ToString() + ") " + fileName);
+                            outLog.Add("WARNING! DUB CHILDREN BLOCKS: " + name + " (" + blockIndex + ") " + fileName);
                             dubBlocks = true;
                         }
                         else if (child >= 0 && child < blocksCount)
@@ -1425,7 +1425,7 @@ namespace Nifscan
                         else
                         {
                             warnBlocks = true;
-                            outLog.Add("WARNING! NOT VALID CHILDREN BLOCKS: " + name + " (" + blockIndex.ToString() + ") " + fileName);
+                            outLog.Add("WARNING! NOT VALID CHILDREN BLOCKS: " + name + " (" + blockIndex + ") " + fileName);
                         }
                         jump += 4;
                     }
@@ -1433,7 +1433,7 @@ namespace Nifscan
                 else
                 {
                     warnBlocks = true;
-                    outLog.Add("WARNING! ERROR PARS: " + name + " (" + blockIndex.ToString() + "): " + fileName);
+                    outLog.Add("WARNING! ERROR PARS: " + name + " (" + blockIndex + "): " + fileName);
                 }
                 if (checkBox3.Checked)
                 {
@@ -1441,7 +1441,7 @@ namespace Nifscan
                     {
                         if (dubBlocks)
                         {
-                            outLog.Add("WARNING! DUB CHILDREN BLOCKS WAS REPLACED TO NONE: " + name + " (" + blockIndex.ToString() + ") " + fileName);
+                            outLog.Add("WARNING! DUB CHILDREN BLOCKS WAS REPLACED TO NONE: " + name + " (" + blockIndex + ") " + fileName);
                         }
                         childsList.Sort();
                         int listCount = 0;
@@ -1463,13 +1463,13 @@ namespace Nifscan
                     }
                     else
                     {
-                        outLog.Add("WARNING! SORTING NOT APPLICABLE: " + name + " (" + blockIndex.ToString() + ") " + fileName);
+                        outLog.Add("WARNING! SORTING NOT APPLICABLE: " + name + " (" + blockIndex + ") " + fileName);
                     }
                 }
             }
             else if (childs < 0)
             {
-                outLog.Add("WARNING! ERROR PARS: " + name + " (" + blockIndex.ToString() + "): " + fileName);
+                outLog.Add("WARNING! ERROR PARS: " + name + " (" + blockIndex + "): " + fileName);
             }
         }
 
@@ -1489,7 +1489,7 @@ namespace Nifscan
             return n;
         }
 
-        private void resizeByteArray(int start, int length, int block)
+        void resizeByteArray(int start, int length, int block)
         {
             List<byte> list = new List<byte>(bytesFile);
             list.RemoveRange(start, length);
@@ -1507,7 +1507,7 @@ namespace Nifscan
             }
         }
 
-        private void replaceBytesInFile(int start, byte[] array)
+        void replaceBytesInFile(int start, byte[] array)
         {
             bytesFile[start] = array[0];
             bytesFile[start + 1] = array[1];
@@ -1904,7 +1904,7 @@ namespace Nifscan
             return bytesArray;
         }
 
-        private void checkCollisions(int jump, long coll)
+        void checkCollisions(int jump, long coll)
         {
             string mat = null;
             if (coll == 131151687)
@@ -2140,18 +2140,18 @@ namespace Nifscan
             }
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             debugMode = !debugMode;
         }
 
-        private void checkBox5_CheckedChanged(object sender, EventArgs e)
+        void checkBox5_CheckedChanged(object sender, EventArgs e)
         {
             textBox1.Enabled = checkBox5.Checked;
             textBox2.Enabled = checkBox5.Checked;
         }
 
-        private void checkBox6_CheckedChanged(object sender, EventArgs e)
+        void checkBox6_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox6.Checked)
             {
@@ -2159,7 +2159,7 @@ namespace Nifscan
             }
         }
 
-        private void checkBox7_CheckedChanged(object sender, EventArgs e)
+        void checkBox7_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox7.Checked)
             {
@@ -2167,7 +2167,7 @@ namespace Nifscan
             }
         }
 
-        private void checkBox8_CheckedChanged(object sender, EventArgs e)
+        void checkBox8_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox8.Checked)
             {
@@ -2175,7 +2175,7 @@ namespace Nifscan
             }
         }
 
-        private void checkBox9_CheckedChanged(object sender, EventArgs e)
+        void checkBox9_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox9.Checked)
             {
@@ -2183,7 +2183,7 @@ namespace Nifscan
             }
         }
 
-        private void checkBox4_CheckedChanged(object sender, EventArgs e)
+        void checkBox4_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox4.Checked)
             {
@@ -2198,35 +2198,35 @@ namespace Nifscan
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        void button3_Click(object sender, EventArgs e)
         {
             var form = new FormParallax();
             form.ShowDialog();
             form = null;
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        void button4_Click(object sender, EventArgs e)
         {
             var form = new FormEC();
             form.ShowDialog();
             form = null;
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        void button5_Click(object sender, EventArgs e)
         {
             var form = new FormVC();
             form.ShowDialog();
             form = null;
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        void button6_Click(object sender, EventArgs e)
         {
             var form = new FormVer();
             form.ShowDialog();
             form = null;
         }
 
-        private void button7_Click(object sender, EventArgs e)
+        void button7_Click(object sender, EventArgs e)
         {
             var form = new FormSpec();
             form.ShowDialog();
@@ -2238,7 +2238,7 @@ namespace Nifscan
             setColor(button == 3 ? button3 : button == 4 ? button4 : button == 5 ? button5 : button == 6 ? button6 : button7, edit);
         }
 
-        private void setColor(Button button, bool edit)
+        void setColor(Button button, bool edit)
         {
             if (edit)
             {

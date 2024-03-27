@@ -19,7 +19,7 @@ namespace Nifscan
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        void button1_Click(object sender, EventArgs e)
         {
             FormMain.texturesList.Clear();
             foreach (string line in textBox1.Lines)
@@ -32,17 +32,17 @@ namespace Nifscan
             Dispose();
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             FormMain.parallaxInvert = checkBox1.Checked;
         }
 
-        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
             FormMain.parallaxCompare = checkBox2.Checked;
         }
 
-        private void checkBox3_CheckedChanged(object sender, EventArgs e)
+        void checkBox3_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox3.Checked)
             {
@@ -55,7 +55,7 @@ namespace Nifscan
             changeState();
         }
 
-        private void checkBox4_CheckedChanged(object sender, EventArgs e)
+        void checkBox4_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox4.Checked)
             {
@@ -65,7 +65,7 @@ namespace Nifscan
             changeState();
         }
 
-        private void changeState()
+        void changeState()
         {
             checkBox1.Enabled = checkBox3.Checked && !checkBox4.Checked;
             checkBox2.Enabled = !checkBox3.Checked && !checkBox4.Checked;

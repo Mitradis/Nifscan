@@ -27,15 +27,15 @@ namespace Nifscan
             textBox6.TextChanged += new System.EventHandler(textBox6_TextChanged);
         }
 
-        private void fillFromCache(TextBox textbox, List<float> list)
+        void fillFromCache(TextBox textbox, List<float> list)
         {
             foreach (float num in list)
             {
-                textbox.Text += num.ToString() + Environment.NewLine;
+                textbox.Text += num + Environment.NewLine;
             }
         }
 
-        private void textBox1_TextChanged(object sender, System.EventArgs e)
+        void textBox1_TextChanged(object sender, System.EventArgs e)
         {
             FormMain.specTextures.Clear();
             foreach (string line in textBox1.Lines)
@@ -48,32 +48,32 @@ namespace Nifscan
             changeButton();
         }
 
-        private void textBox2_TextChanged(object sender, System.EventArgs e)
+        void textBox2_TextChanged(object sender, System.EventArgs e)
         {
             changedText(textBox2, FormMain.specGlossiness);
         }
 
-        private void textBox3_TextChanged(object sender, System.EventArgs e)
+        void textBox3_TextChanged(object sender, System.EventArgs e)
         {
             changedText(textBox3, FormMain.specR);
         }
 
-        private void textBox4_TextChanged(object sender, System.EventArgs e)
+        void textBox4_TextChanged(object sender, System.EventArgs e)
         {
             changedText(textBox4, FormMain.specG);
         }
 
-        private void textBox5_TextChanged(object sender, System.EventArgs e)
+        void textBox5_TextChanged(object sender, System.EventArgs e)
         {
             changedText(textBox5, FormMain.specB);
         }
 
-        private void textBox6_TextChanged(object sender, System.EventArgs e)
+        void textBox6_TextChanged(object sender, System.EventArgs e)
         {
             changedText(textBox6, FormMain.specStrength);
         }
 
-        private void changedText(TextBox textbox, List<float> list)
+        void changedText(TextBox textbox, List<float> list)
         {
             list.Clear();
             foreach (string line in textbox.Lines)
@@ -90,12 +90,12 @@ namespace Nifscan
             changeButton();
         }
 
-        private void changeButton()
+        void changeButton()
         {
             FormMain.formMain.buttonColor(7, FormMain.specTextures.Count > 0);
         }
 
-        private void FormSpec_FormClosing(object sender, FormClosingEventArgs e)
+        void FormSpec_FormClosing(object sender, FormClosingEventArgs e)
         {
             int count = FormMain.specTextures.Count;
             FormMain.specAvailable = FormMain.specGlossiness.Count == count && FormMain.specR.Count == count && FormMain.specG.Count == count && FormMain.specB.Count == count && FormMain.specStrength.Count == count;

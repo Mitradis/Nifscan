@@ -19,7 +19,7 @@ namespace Nifscan
             numericUpDown4.Value = (decimal)FormMain.vcA;
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             FormMain.vcColor = checkBox1.Checked;
             numericUpDown1.Enabled = checkBox1.Checked;
@@ -28,34 +28,34 @@ namespace Nifscan
             changeButton();
         }
 
-        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
             FormMain.vcAlpha = checkBox2.Checked;
             numericUpDown4.Enabled = checkBox2.Checked;
             changeButton();
         }
 
-        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
             FormMain.vcR = (float)numericUpDown1.Value;
         }
 
-        private void numericUpDown2_ValueChanged(object sender, EventArgs e)
+        void numericUpDown2_ValueChanged(object sender, EventArgs e)
         {
             FormMain.vcG = (float)numericUpDown2.Value;
         }
 
-        private void numericUpDown3_ValueChanged(object sender, EventArgs e)
+        void numericUpDown3_ValueChanged(object sender, EventArgs e)
         {
             FormMain.vcB = (float)numericUpDown3.Value;
         }
 
-        private void numericUpDown4_ValueChanged(object sender, EventArgs e)
+        void numericUpDown4_ValueChanged(object sender, EventArgs e)
         {
             FormMain.vcA = (float)numericUpDown4.Value;
         }
 
-        private void checkBox3_CheckedChanged(object sender, EventArgs e)
+        void checkBox3_CheckedChanged(object sender, EventArgs e)
         {
             FormMain.vcRemove = checkBox3.Checked;
             if (checkBox3.Checked)
@@ -75,7 +75,7 @@ namespace Nifscan
             changeButton();
         }
 
-        private void changeButton()
+        void changeButton()
         {
             FormMain.formMain.buttonColor(5, checkBox1.Checked || checkBox2.Checked || checkBox3.Checked);
         }
