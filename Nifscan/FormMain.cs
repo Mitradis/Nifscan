@@ -653,6 +653,8 @@ namespace Nifscan
                         }
                         else if (blocksNamesList[i] == "NiTriShape" || blocksNamesList[i] == "BSLODTriShape")
                         {
+                            int nameindex = (int)BitConverter.ToUInt32(bytesFile, realBlockStart);
+                            string shapename = nameindex >= 0 ? stringsList[nameindex] : "";
                             int extraBlocks = (int)BitConverter.ToUInt32(bytesFile, realBlockStart + 4);
                             extraCheck(realBlockStart + 8, extraBlocks, i, blocksNamesList[i]);
                             int jump = realBlockStart + 72 + (extraBlocks * 4);
@@ -670,10 +672,16 @@ namespace Nifscan
                                 lods += (int)BitConverter.ToUInt32(bytesFile, jump2 + 12);
                                 lods += (int)BitConverter.ToUInt32(bytesFile, jump2 + 16);
                             }
+                            long vectorFlags = 0;
+                            int vFlags = 0;
+                            int normalsStart = 0;
+                            int tangentsStart = 0;
+                            int bitangentsStart = 0;
                             int numVertices = 0;
                             int vcStart = 0;
                             int vcYesNo = 0;
                             bool hasTangents = false;
+                            bool hasUV = false;
                             bool hasNormals = false;
                             bool hasVColors = false;
                             bool vaEmpty = false;
@@ -758,22 +766,55 @@ namespace Nifscan
                                             jump3++;
                                             jump3 += numVertices * 12;
                                         }
-                                        long toConvert = BitConverter.ToUInt16(bytesFile, jump3);
-                                        hasTangents = ((VectorFlags)toConvert & VectorFlags.Has_Tangents) != 0;
-                                        bool hasUV = ((VectorFlags)toConvert & VectorFlags.Has_UV) != 0;
+                                        vFlags = jump3;
+                                        vectorFlags = BitConverter.ToUInt16(bytesFile, vFlags);
+                                        hasTangents = ((VectorFlags)vectorFlags & VectorFlags.Has_Tangents) != 0;
+                                        hasUV = ((VectorFlags)vectorFlags & VectorFlags.Has_UV) != 0;
                                         jump3 += 6;
                                         if (bytesFile[jump3] == 1)
                                         {
                                             hasNormals = true;
+                                            normalsStart = jump3;
                                             jump3 += numVertices * 12;
                                             if (hasTangents)
                                             {
-                                                jump3 += numVertices * 24;
+                                                tangentsStart = jump3;
+                                                jump3 += numVertices * 12;
+                                                bitangentsStart = jump3;
+                                                jump3 += numVertices * 12;
                                             }
                                         }
-                                        if (shaderBlock != -1 && ((hasTangents && !hasNormals) || (!hasTangents && hasNormals)))
+                                        if (shaderBlock != -1)
                                         {
-                                            outLog.Add("WARNING! TANGENTS NOT WORK: " + blocksNamesList[i] + " (" + i + ") " + fileName);
+                                            if (shapename == "EditorMarker")
+                                            {
+                                                if (hasTangents)
+                                                {
+                                                    if (checkBox4.Checked)
+                                                    {
+                                                        vectorFlags -= 4096;
+                                                        replaceBytesInFile(vFlags, BitConverter.GetBytes(vectorFlags));
+                                                        hasTangents = false;
+                                                        resizeByteArray(tangentsStart, numVertices * 24, dataBlock);
+                                                        if (jump3 > tangentsStart)
+                                                        {
+                                                            jump3 -= numVertices * 24;
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        outLog.Add("WARNING! EDITOR MARKER NO NEED TANGENTS: " + blocksNamesList[i] + " (" + i + ") " + fileName);
+                                                    }
+                                                }
+                                                if (!hasNormals)
+                                                {
+                                                    outLog.Add("WARNING! EDITOR MARKER NO NORMALS: " + blocksNamesList[i] + " (" + i + ") " + fileName);
+                                                }
+                                            }
+                                            else if ((hasTangents && !hasNormals) || (!hasTangents && hasNormals))
+                                            {
+                                                outLog.Add("WARNING! TANGENTS NOT WORK: " + blocksNamesList[i] + " (" + i + ") " + fileName);
+                                            }
                                         }
                                         jump3 += 17;
                                         if (bytesFile[jump3] == 1)
