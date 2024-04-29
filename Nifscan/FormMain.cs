@@ -786,7 +786,7 @@ namespace Nifscan
                                         }
                                         if (shaderBlock != -1)
                                         {
-                                            if (shapename == "EditorMarker")
+                                            if (shapename == "EditorMarker" || (blocksNamesList[shaderBlock] != "BSLightingShaderProperty"))
                                             {
                                                 if (hasTangents)
                                                 {
@@ -803,12 +803,12 @@ namespace Nifscan
                                                     }
                                                     else
                                                     {
-                                                        outLog.Add("WARNING! EDITOR MARKER NO NEED TANGENTS: " + blocksNamesList[i] + " (" + i + ") " + fileName);
+                                                        outLog.Add("WARNING! MARKERS/EFFECTS NO NEED TANGENTS: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                                     }
                                                 }
                                                 if (!hasNormals)
                                                 {
-                                                    outLog.Add("WARNING! EDITOR MARKER NO NORMALS: " + blocksNamesList[i] + " (" + i + ") " + fileName);
+                                                    outLog.Add("WARNING! MARKERS/EFFECTS WITHOUT NORMALS: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                                 }
                                             }
                                             else if ((hasTangents && !hasNormals) || (!hasTangents && hasNormals))
@@ -1363,7 +1363,7 @@ namespace Nifscan
                                             jump3 += 4;
                                             if (BitConverter.ToSingle(bytesFile, jump3) < 0.1)
                                             {
-                                                outLog.Add("WARNING! ENVMAP NOT VISIBLE: " + blocksNamesList[i] + " (" + i + ") " + fileName);
+                                                outLog.Add("WARNING! ENVMAP SCALE LOW: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                             }
                                         }
                                         if ((hasAnisotropicLightingFlag && !hasSpecular) || (!hasSpecular && hasSpaceNormalsFlag && hasSTexture) || (hasSpecular && hasSpaceNormalsFlag && !hasSTexture))
