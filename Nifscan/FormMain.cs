@@ -1062,7 +1062,7 @@ namespace Nifscan
                                             replaceBytesInFile(jump3, BitConverter.GetBytes(shaderFlags1));
                                             hasParallaxFlag = false;
                                         }
-                                        else if (((bytesFile[realBlockStart] == 3 && !hasParallaxFlag) || (bytesFile[realBlockStart] != 3 && hasParallaxFlag)) || ((bytesFile[realBlockStart] == 3 && hasParallaxFlag && (!hasPTexture || !hasVColors || !hasNormals || !hasTangents || skinBlock != -1))) || (hasPTexture && (bytesFile[realBlockStart] != 3 || !hasParallaxFlag)))
+                                        if (((bytesFile[realBlockStart] == 3 && !hasParallaxFlag) || (bytesFile[realBlockStart] != 3 && hasParallaxFlag)) || ((bytesFile[realBlockStart] == 3 && hasParallaxFlag && (!hasPTexture || !hasVColors || !hasNormals || !hasTangents || skinBlock != -1))) || (hasPTexture && (bytesFile[realBlockStart] != 3 || !hasParallaxFlag)))
                                         {
                                             outLog.Add("WARNING! PARALLAX NOT WORK: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                         }
