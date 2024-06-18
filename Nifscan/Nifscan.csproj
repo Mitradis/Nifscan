@@ -97,6 +97,12 @@
     <Compile Include="FormVC.Designer.cs">
       <DependentUpon>FormVC.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormES.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormES.Designer.cs">
+      <DependentUpon>FormES.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="FormEC.resx">
       <DependentUpon>FormEC.cs</DependentUpon>
     </EmbeddedResource>
@@ -114,6 +120,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormVC.resx">
       <DependentUpon>FormVC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormES.resx">
+      <DependentUpon>FormES.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

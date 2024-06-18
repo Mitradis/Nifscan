@@ -1,0 +1,244 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
+using System.Windows.Forms;
+
+namespace Nifscan
+{
+    public partial class FormES : Form
+    {
+        static string path = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+        string pathData = Path.Combine(path, "Data");
+        string pathOrig = Path.Combine(path, "Original");
+        string[] masters = new string[] { "Skyrim.esm", "Update.esm", "Dawnguard.esm", "HearthFires.esm", "Dragonborn.esm" };
+        byte[] bytesFile;
+
+        public FormES()
+        {
+            InitializeComponent();
+        }
+
+        void button1_Click(object sender, EventArgs e)
+        {
+            if (Directory.Exists(pathOrig))
+            {
+                foreach (string line in masters)
+                {
+                    processRNAM(line);
+                }
+            }
+        }
+
+        void button2_Click(object sender, EventArgs e)
+        {
+            if (Directory.Exists(pathOrig))
+            {
+                enumFiles(pathOrig);
+            }
+            if (Directory.Exists(pathData))
+            {
+                enumFiles(pathData);
+            }
+        }
+
+        void enumFiles(string path)
+        {
+            foreach (string line in Directory.EnumerateFiles(path))
+            {
+                if (line.EndsWith(".esm", StringComparison.OrdinalIgnoreCase) || line.EndsWith(".esp", StringComparison.OrdinalIgnoreCase))
+                {
+                    processFix(line);
+                }
+            }
+        }
+
+        void processRNAM(string file)
+        {
+            bool parse = false;
+            if (File.Exists(Path.Combine(pathOrig, file)))
+            {
+                parse = true;
+                file = Path.Combine(pathOrig, file);
+            }
+            else if (File.Exists(Path.Combine(pathData, file)))
+            {
+                file = Path.Combine(pathData, file);
+            }
+            else
+            {
+                return;
+            }
+            int gwrldStart = 0;
+            bool wrldFound = false;
+            bool changed = false;
+            bytesFile = File.ReadAllBytes(file);
+            int fileSize = bytesFile.Length;
+            for (int i = 0; i < fileSize; i++)
+            {
+                if (!wrldFound)
+                {
+                    if (bytesFile[i] == 71 && bytesFile[i + 1] == 82 && bytesFile[i + 2] == 85 && bytesFile[i + 3] == 80 && bytesFile[i + 8] == 87 && bytesFile[i + 9] == 82 && bytesFile[i + 10] == 76 && bytesFile[i + 11] == 68 && bytesFile[i + 24] == 87 && bytesFile[i + 25] == 82 && bytesFile[i + 26] == 76 && bytesFile[i + 27] == 68 && bytesFile[i + 48] == 69 && bytesFile[i + 49] == 68 && bytesFile[i + 50] == 73 && bytesFile[i + 51] == 68)
+                    {
+                        wrldFound = true;
+                        gwrldStart = i + 4;
+                    }
+                }
+                else
+                {
+                    if (bytesFile[i] == 87 && bytesFile[i + 1] == 82 && bytesFile[i + 2] == 76 && bytesFile[i + 3] == 68 && bytesFile[i + 24] == 69 && bytesFile[i + 25] == 68 && bytesFile[i + 26] == 73 && bytesFile[i + 27] == 68)
+                    {
+                        int wrldStart = i + 4;
+                        int nameLength = BitConverter.ToUInt16(bytesFile, i + 28);
+                        byte[] bytesName = new byte[nameLength - 1];
+                        Buffer.BlockCopy(bytesFile, i + 30, bytesName, 0, nameLength - 1);
+                        string worldName = Encoding.UTF8.GetString(bytesName);
+                        i = i + 30 + nameLength;
+                        if (parse)
+                        {
+                            List<byte> outBytes = new List<byte>();
+                            while (i < fileSize)
+                            {
+                                if (bytesFile[i] == 82 && bytesFile[i + 1] == 78 && bytesFile[i + 2] == 65 && bytesFile[i + 3] == 77)
+                                {
+                                    int rnamLength = BitConverter.ToUInt16(bytesFile, i + 4);
+                                    byte[] bytesBuffer = new byte[6 + rnamLength];
+                                    Buffer.BlockCopy(bytesFile, i, bytesBuffer, 0, 6 + rnamLength);
+                                    outBytes.AddRange(bytesBuffer);
+                                    bytesBuffer = null;
+                                    i += 6 + rnamLength;
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                            if (outBytes.Count > 0)
+                            {
+                                File.WriteAllBytes(Path.Combine(pathOrig, Path.GetFileNameWithoutExtension(file) + " " + worldName), outBytes.ToArray());
+                            }
+                            outBytes.Clear();
+                        }
+                        else if (bytesFile[i] != 82 && bytesFile[i + 1] != 78 && bytesFile[i + 2] != 65 && bytesFile[i + 3] != 77 && File.Exists(Path.Combine(pathOrig, Path.GetFileNameWithoutExtension(file) + " " + worldName)))
+                        {
+                            byte[] bytesRead = File.ReadAllBytes(Path.Combine(pathOrig, Path.GetFileNameWithoutExtension(file) + " " + worldName));
+                            int readSize = bytesRead.Length;
+                            byte[] bytesBuffer = new byte[fileSize + readSize];
+                            Buffer.BlockCopy(bytesFile, 0, bytesBuffer, 0, i);
+                            Buffer.BlockCopy(bytesRead, 0, bytesBuffer, i, readSize);
+                            bytesRead = null;
+                            Buffer.BlockCopy(bytesFile, i, bytesBuffer, i + readSize, fileSize - i);
+                            bytesFile = bytesBuffer;
+                            bytesBuffer = null;
+                            fileSize = fileSize + readSize;
+                            replaceBytesInFile(gwrldStart, BitConverter.GetBytes(BitConverter.ToInt32(bytesFile, gwrldStart) + readSize));
+                            replaceBytesInFile(wrldStart, BitConverter.GetBytes(BitConverter.ToInt32(bytesFile, wrldStart) + readSize));
+                            i += readSize - 1;
+                            changed = true;
+                        }
+                    }
+                }
+            }
+            if (changed)
+            {
+                File.WriteAllBytes(file, bytesFile);
+            }
+            bytesFile = null;
+        }
+
+        void processFix(string file)
+        {
+            bool parse = false;
+            if (file.IndexOf("Original", StringComparison.OrdinalIgnoreCase) != -1)
+            {
+                parse = true;
+            }
+            int gpackStart = 0;
+            bool packFound = false;
+            bool changed = false;
+            bytesFile = File.ReadAllBytes(file);
+            int fileSize = bytesFile.Length;
+            for (int i = 0; i < fileSize; i++)
+            {
+                if (!packFound)
+                {
+                    if (bytesFile[i] == 71 && bytesFile[i + 1] == 82 && bytesFile[i + 2] == 85 && bytesFile[i + 3] == 80 && bytesFile[i + 8] == 80 && bytesFile[i + 9] == 65 && bytesFile[i + 10] == 67 && bytesFile[i + 11] == 75 && bytesFile[i + 24] == 80 && bytesFile[i + 25] == 65 && bytesFile[i + 26] == 67 && bytesFile[i + 27] == 75 && bytesFile[i + 48] == 69 && bytesFile[i + 49] == 68 && bytesFile[i + 50] == 73 && bytesFile[i + 51] == 68)
+                    {
+                        packFound = true;
+                        gpackStart = i + 4;
+                    }
+                }
+                else
+                {
+                    if (bytesFile[i] == 80 && bytesFile[i + 1] == 65 && bytesFile[i + 2] == 67 && bytesFile[i + 3] == 75 && bytesFile[i + 24] == 69 && bytesFile[i + 25] == 68 && bytesFile[i + 26] == 73 && bytesFile[i + 27] == 68)
+                    {
+                        string ID = bytesFile[i + 15].ToString("X2") + bytesFile[i + 14].ToString("X2") + bytesFile[i + 13].ToString("X2") + bytesFile[i + 12].ToString("X2");
+                        int ctda = 1;
+                        int length = 24 + BitConverter.ToInt32(bytesFile, i + 4);
+                        int count = i + length;
+                        for (int j = i + 24; j < count; j++)
+                        {
+                            if (bytesFile[j] == 67 && bytesFile[j + 1] == 84 && bytesFile[j + 2] == 68 && bytesFile[j + 3] == 65 && ((bytesFile[j + 14] == 127 && bytesFile[j + 15] == 2 && bytesFile[j + 16] == 0 && bytesFile[j + 17] == 0) || (bytesFile[j + 14] == 118 && bytesFile[j + 15] == 2 && bytesFile[j + 16] == 0 && bytesFile[j + 17] == 0) || (bytesFile[j + 14] == 117 && bytesFile[j + 15] == 2 && bytesFile[j + 16] == 0 && bytesFile[j + 17] == 0) || (bytesFile[j + 14] == 117 && bytesFile[j + 15] == 2 && bytesFile[j + 16] == 253 && bytesFile[j + 17] == 4) || (bytesFile[j + 14] == 79 && bytesFile[j + 15] == 0 && bytesFile[j + 16] == 0 && bytesFile[j + 17] == 0)))
+                            {
+                                if (parse)
+                                {
+                                    byte[] bytesBuffer = new byte[4];
+                                    Buffer.BlockCopy(bytesFile, j + 22, bytesBuffer, 0, 4);
+                                    File.WriteAllBytes(Path.Combine(pathOrig, "CTDA " + ID + " " + length + " " + ctda), bytesBuffer);
+                                    bytesBuffer = null;
+                                }
+                                else if (bytesFile[j + 22] == 0 && bytesFile[j + 23] == 0 && bytesFile[j + 24] == 0 && bytesFile[j + 25] == 0)
+                                {
+                                    if (bytesFile[j + 14] == 79 && bytesFile[j + 15] == 0 && bytesFile[j + 16] == 0 && bytesFile[j + 17] == 0 && bytesFile[j + 38] == 67 && bytesFile[j + 39] == 73 && bytesFile[j + 40] == 83 && bytesFile[j + 41] == 50)
+                                    {
+                                        int cis2 = 6 + BitConverter.ToInt16(bytesFile, j + 42);
+                                        if (File.Exists(Path.Combine(pathOrig, "CTDA " + ID + " " + (length - cis2) + " " + ctda)))
+                                        {
+                                            byte[] bytesBuffer = new byte[fileSize - cis2];
+                                            Buffer.BlockCopy(bytesFile, 0, bytesBuffer, 0, j + 38);
+                                            Buffer.BlockCopy(bytesFile, j + 38 + cis2, bytesBuffer, j + 38, fileSize - cis2 - (j + 38));
+                                            bytesFile = bytesBuffer;
+                                            bytesBuffer = null;
+                                            fileSize -= cis2;
+                                            length -= cis2;
+                                            count -= cis2;
+                                            replaceBytesInFile(i + 4, BitConverter.GetBytes(length - 24));
+                                            replaceBytesInFile(gpackStart, BitConverter.GetBytes(BitConverter.ToInt32(bytesFile, gpackStart) - cis2));
+                                        }
+                                    }
+                                    if (File.Exists(Path.Combine(pathOrig, "CTDA " + ID + " " + length + " " + ctda)))
+                                    {
+                                        byte[] bytesRead = File.ReadAllBytes(Path.Combine(pathOrig, "CTDA " + ID + " " + length + " " + ctda));
+                                        replaceBytesInFile(j + 22, bytesRead);
+                                        changed = true;
+                                    }
+                                    else
+                                    {
+                                        MessageBox.Show("File: " + file + " have broken CTDA in form: " + ID + " and not found original data: " + Path.Combine(pathOrig, "CTDA " + ID + " " + length + " " + ctda));
+                                    }
+                                }
+                                j += 25;
+                                ctda++;
+                            }
+                        }
+                        i += length - 1;
+                    }
+                }
+            }
+            if (changed)
+            {
+                File.WriteAllBytes(file, bytesFile);
+            }
+            bytesFile = null;
+        }
+
+        void replaceBytesInFile(int start, byte[] array)
+        {
+            bytesFile[start] = array[0];
+            bytesFile[start + 1] = array[1];
+            bytesFile[start + 2] = array[2];
+            bytesFile[start + 3] = array[3];
+        }
+    }
+}

@@ -159,7 +159,7 @@ namespace Nifscan
             formMain = this;
         }
 
-        void button1_Click(object sender, EventArgs e)
+        void button7_Click(object sender, EventArgs e)
         {
             if (tempPath == null)
             {
@@ -177,11 +177,11 @@ namespace Nifscan
             }
         }
 
-        void button2_Click(object sender, System.EventArgs e)
+        void button8_Click(object sender, System.EventArgs e)
         {
             if (Directory.Exists(tempPath))
             {
-                button2.Enabled = false;
+                button8.Enabled = false;
                 foreach (string line in Directory.EnumerateFiles(tempPath, "*.nif", SearchOption.AllDirectories))
                 {
                     currentFile(line);
@@ -199,7 +199,7 @@ namespace Nifscan
                 outLog.Clear();
                 totalFiles = 0;
                 successFiles = 0;
-                button2.Enabled = true;
+                button8.Enabled = true;
             }
         }
 
@@ -621,7 +621,7 @@ namespace Nifscan
                                     outLog.Add("WARNING! ALL COLLISION NORMALS EQUAL ZERO: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                 }
                             }
-                            if (checkBox2.Checked || checkBox5.Checked)
+                            if (checkBox2.Checked || checkBox6.Checked)
                             {
                                 if (blocksNamesList[i] == "bhkBoxShape" || blocksNamesList[i] == "bhkNiTriStripsShape" || blocksNamesList[i] == "bhkSphereShape" || blocksNamesList[i] == "bhkConvexVerticesShape" || blocksNamesList[i] == "bhkCapsuleShape")
                                 {
@@ -1092,11 +1092,11 @@ namespace Nifscan
                                                 outLog.Add("WARNING! USELESS ALPHA FLAG IN TREE: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                             }
                                         }
-                                        if ((checkBox6.Checked || checkBox7.Checked) && comboBox1.SelectedIndex != -1)
+                                        if ((checkBox7.Checked || checkBox8.Checked) && comboBox1.SelectedIndex != -1)
                                         {
                                             if (((ShadeFlags1)shaderFlags1 & (ShadeFlags1)(1 << comboBox1.SelectedIndex)) != 0)
                                             {
-                                                if (checkBox7.Checked)
+                                                if (checkBox8.Checked)
                                                 {
                                                     shaderFlags1 -= 1 << comboBox1.SelectedIndex;
                                                     replaceBytesInFile(jump3, BitConverter.GetBytes(shaderFlags1));
@@ -1104,7 +1104,7 @@ namespace Nifscan
                                             }
                                             else
                                             {
-                                                if (checkBox6.Checked)
+                                                if (checkBox7.Checked)
                                                 {
                                                     shaderFlags1 += 1 << comboBox1.SelectedIndex;
                                                     replaceBytesInFile(jump3, BitConverter.GetBytes(shaderFlags1));
@@ -1189,11 +1189,11 @@ namespace Nifscan
                                                 outLog.Add("WARNING! HAS SOFTLIGHTING FLAG BUT TEXTURE NOT: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                             }
                                         }
-                                        if ((checkBox8.Checked || checkBox9.Checked) && comboBox2.SelectedIndex != -1)
+                                        if ((checkBox9.Checked || checkBox10.Checked) && comboBox2.SelectedIndex != -1)
                                         {
                                             if (((ShadeFlags2)shaderFlags2 & (ShadeFlags2)(1 << comboBox2.SelectedIndex)) != 0)
                                             {
-                                                if (checkBox9.Checked)
+                                                if (checkBox10.Checked)
                                                 {
                                                     shaderFlags2 -= 1 << comboBox2.SelectedIndex;
                                                     replaceBytesInFile(jump3, BitConverter.GetBytes(shaderFlags2));
@@ -1201,7 +1201,7 @@ namespace Nifscan
                                             }
                                             else
                                             {
-                                                if (checkBox8.Checked)
+                                                if (checkBox9.Checked)
                                                 {
                                                     shaderFlags2 += 1 << comboBox2.SelectedIndex;
                                                     replaceBytesInFile(jump3, BitConverter.GetBytes(shaderFlags2));
@@ -1271,7 +1271,7 @@ namespace Nifscan
                                             {
                                                 outLog.Add("WARNING! SKIN INCORRECT PARAMETERS: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                             }
-                                            if (checkBox10.Checked)
+                                            if (checkBox5.Checked)
                                             {
                                                 replaceBytesInFile(jump3, BitConverter.GetBytes((float)23));
                                                 jump3 += 4;
@@ -2175,7 +2175,7 @@ namespace Nifscan
                     outLog.Add("WARNING! WRONG MATERIAL COLLISION: " + fileName);
                 }
             }
-            if (checkBox5.Checked && mat == textBox1.Text && textBox2.Text.Length > 12)
+            if (checkBox6.Checked && mat == textBox1.Text && textBox2.Text.Length > 12)
             {
                 replaceBytesInFile(jump, materialBytes(textBox2.Text));
             }
@@ -2188,39 +2188,39 @@ namespace Nifscan
 
         void checkBox5_CheckedChanged(object sender, EventArgs e)
         {
-            textBox1.Enabled = checkBox5.Checked;
-            textBox2.Enabled = checkBox5.Checked;
+            textBox1.Enabled = checkBox6.Checked;
+            textBox2.Enabled = checkBox6.Checked;
         }
 
         void checkBox6_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox6.Checked)
+            if (checkBox7.Checked)
             {
-                checkBox7.Checked = false;
+                checkBox8.Checked = false;
             }
         }
 
         void checkBox7_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox7.Checked)
+            if (checkBox8.Checked)
             {
-                checkBox6.Checked = false;
+                checkBox7.Checked = false;
             }
         }
 
         void checkBox8_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox8.Checked)
+            if (checkBox9.Checked)
             {
-                checkBox9.Checked = false;
+                checkBox10.Checked = false;
             }
         }
 
         void checkBox9_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox9.Checked)
+            if (checkBox10.Checked)
             {
-                checkBox8.Checked = false;
+                checkBox9.Checked = false;
             }
         }
 
@@ -2239,9 +2239,23 @@ namespace Nifscan
             }
         }
 
+        void button1_Click(object sender, EventArgs e)
+        {
+            var form = new FormVer();
+            form.ShowDialog();
+            form = null;
+        }
+
+        void button2_Click(object sender, EventArgs e)
+        {
+            var form = new FormSpec();
+            form.ShowDialog();
+            form = null;
+        }
+
         void button3_Click(object sender, EventArgs e)
         {
-            var form = new FormParallax();
+            var form = new FormES();
             form.ShowDialog();
             form = null;
         }
@@ -2255,28 +2269,21 @@ namespace Nifscan
 
         void button5_Click(object sender, EventArgs e)
         {
-            var form = new FormVC();
+            var form = new FormParallax();
             form.ShowDialog();
             form = null;
         }
 
         void button6_Click(object sender, EventArgs e)
         {
-            var form = new FormVer();
-            form.ShowDialog();
-            form = null;
-        }
-
-        void button7_Click(object sender, EventArgs e)
-        {
-            var form = new FormSpec();
+            var form = new FormVC();
             form.ShowDialog();
             form = null;
         }
 
         public void buttonColor(int button, bool edit)
         {
-            setColor(button == 3 ? button3 : button == 4 ? button4 : button == 5 ? button5 : button == 6 ? button6 : button7, edit);
+            setColor(button == 3 ? button5 : button == 4 ? button4 : button == 5 ? button6 : button == 6 ? button1 : button2, edit);
         }
 
         void setColor(Button button, bool edit)
