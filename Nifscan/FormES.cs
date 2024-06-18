@@ -43,9 +43,9 @@ namespace Nifscan
             }
         }
 
-        void enumFiles(string path)
+        void enumFiles(string folder)
         {
-            foreach (string line in Directory.EnumerateFiles(path))
+            foreach (string line in Directory.EnumerateFiles(folder))
             {
                 if (line.EndsWith(".esm", StringComparison.OrdinalIgnoreCase) || line.EndsWith(".esp", StringComparison.OrdinalIgnoreCase))
                 {
@@ -94,7 +94,8 @@ namespace Nifscan
                         byte[] bytesName = new byte[nameLength - 1];
                         Buffer.BlockCopy(bytesFile, i + 30, bytesName, 0, nameLength - 1);
                         string worldName = Encoding.UTF8.GetString(bytesName);
-                        i = i + 30 + nameLength;
+                        bytesName = null;
+                        i += 30 + nameLength;
                         if (parse)
                         {
                             List<byte> outBytes = new List<byte>();
@@ -102,12 +103,12 @@ namespace Nifscan
                             {
                                 if (bytesFile[i] == 82 && bytesFile[i + 1] == 78 && bytesFile[i + 2] == 65 && bytesFile[i + 3] == 77)
                                 {
-                                    int rnamLength = BitConverter.ToUInt16(bytesFile, i + 4);
-                                    byte[] bytesBuffer = new byte[6 + rnamLength];
-                                    Buffer.BlockCopy(bytesFile, i, bytesBuffer, 0, 6 + rnamLength);
+                                    int length = BitConverter.ToUInt16(bytesFile, i + 4);
+                                    byte[] bytesBuffer = new byte[6 + length];
+                                    Buffer.BlockCopy(bytesFile, i, bytesBuffer, 0, 6 + length);
                                     outBytes.AddRange(bytesBuffer);
                                     bytesBuffer = null;
-                                    i += 6 + rnamLength;
+                                    i += 6 + length;
                                 }
                                 else
                                 {
@@ -131,7 +132,7 @@ namespace Nifscan
                             Buffer.BlockCopy(bytesFile, i, bytesBuffer, i + readSize, fileSize - i);
                             bytesFile = bytesBuffer;
                             bytesBuffer = null;
-                            fileSize = fileSize + readSize;
+                            fileSize += readSize;
                             replaceBytesInFile(gwrldStart, BitConverter.GetBytes(BitConverter.ToInt32(bytesFile, gwrldStart) + readSize));
                             replaceBytesInFile(wrldStart, BitConverter.GetBytes(BitConverter.ToInt32(bytesFile, wrldStart) + readSize));
                             i += readSize - 1;
@@ -211,6 +212,7 @@ namespace Nifscan
                                     {
                                         byte[] bytesRead = File.ReadAllBytes(Path.Combine(pathOrig, "CTDA " + ID + " " + length + " " + ctda));
                                         replaceBytesInFile(j + 22, bytesRead);
+                                        bytesRead = null;
                                         changed = true;
                                     }
                                     else
