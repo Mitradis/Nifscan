@@ -90,6 +90,7 @@
             // 
             // checkBox2
             // 
+            this.checkBox2.Enabled = false;
             this.checkBox2.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.checkBox2.Location = new System.Drawing.Point(62, 68);
             this.checkBox2.Name = "checkBox2";
@@ -175,6 +176,7 @@
             // 
             // checkBox4
             // 
+            this.checkBox4.Enabled = false;
             this.checkBox4.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.checkBox4.Location = new System.Drawing.Point(62, 99);
             this.checkBox4.Name = "checkBox4";
@@ -196,6 +198,7 @@
             // 
             // checkBox6
             // 
+            this.checkBox6.Enabled = false;
             this.checkBox6.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.checkBox6.Location = new System.Drawing.Point(62, 130);
             this.checkBox6.Name = "checkBox6";

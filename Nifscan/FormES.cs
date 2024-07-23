@@ -35,21 +35,22 @@ namespace Nifscan
         {
             if (Directory.Exists(pathOrig))
             {
-                enumFiles(pathOrig);
+                foreach (string line in masters)
+                {
+                    if (File.Exists(Path.Combine(pathOrig, line)))
+                    {
+                        processFix(Path.Combine(pathOrig, line), true);
+                    }
+                }
             }
             if (Directory.Exists(pathData))
             {
-                enumFiles(pathData);
-            }
-        }
-
-        void enumFiles(string folder)
-        {
-            foreach (string line in Directory.EnumerateFiles(folder))
-            {
-                if (line.EndsWith(".esm", StringComparison.OrdinalIgnoreCase) || line.EndsWith(".esp", StringComparison.OrdinalIgnoreCase))
+                foreach (string line in Directory.EnumerateFiles(pathData))
                 {
-                    processFix(line);
+                    if (line.EndsWith(".esm", StringComparison.OrdinalIgnoreCase) || line.EndsWith(".esp", StringComparison.OrdinalIgnoreCase))
+                    {
+                        processFix(line);
+                    }
                 }
             }
         }
@@ -148,13 +149,8 @@ namespace Nifscan
             bytesFile = null;
         }
 
-        void processFix(string file)
+        void processFix(string file, bool parse = false)
         {
-            bool parse = false;
-            if (file.IndexOf("Original", StringComparison.OrdinalIgnoreCase) != -1)
-            {
-                parse = true;
-            }
             int gpackStart = 0;
             bool packFound = false;
             bool changed = false;
@@ -176,20 +172,29 @@ namespace Nifscan
                     {
                         string ID = bytesFile[i + 15].ToString("X2") + bytesFile[i + 14].ToString("X2") + bytesFile[i + 13].ToString("X2") + bytesFile[i + 12].ToString("X2");
                         int ctda = 1;
-                        int length = 24 + BitConverter.ToInt32(bytesFile, i + 4);
-                        int count = i + length;
+                        int length = BitConverter.ToInt32(bytesFile, i + 4);
+                        int count = i + length + 24;
                         for (int j = i + 24; j < count; j++)
                         {
-                            if (bytesFile[j] == 67 && bytesFile[j + 1] == 84 && bytesFile[j + 2] == 68 && bytesFile[j + 3] == 65 && ((bytesFile[j + 14] == 127 && bytesFile[j + 15] == 2 && bytesFile[j + 16] == 0 && bytesFile[j + 17] == 0) || (bytesFile[j + 14] == 118 && bytesFile[j + 15] == 2 && bytesFile[j + 16] == 0 && bytesFile[j + 17] == 0) || (bytesFile[j + 14] == 117 && bytesFile[j + 15] == 2 && bytesFile[j + 16] == 0 && bytesFile[j + 17] == 0) || (bytesFile[j + 14] == 117 && bytesFile[j + 15] == 2 && bytesFile[j + 16] == 253 && bytesFile[j + 17] == 4) || (bytesFile[j + 14] == 79 && bytesFile[j + 15] == 0 && bytesFile[j + 16] == 0 && bytesFile[j + 17] == 0)))
+                            bool eighteen = bytesFile[j + 14] == 163 && bytesFile[j + 15] == 2 && bytesFile[j + 16] == 0 && bytesFile[j + 17] == 0;
+                            if (bytesFile[j] == 67 && bytesFile[j + 1] == 84 && bytesFile[j + 2] == 68 && bytesFile[j + 3] == 65 && (eighteen || (bytesFile[j + 14] == 127 && bytesFile[j + 15] == 2 && bytesFile[j + 16] == 0 && bytesFile[j + 17] == 0) || (bytesFile[j + 14] == 118 && bytesFile[j + 15] == 2 && bytesFile[j + 16] == 0 && bytesFile[j + 17] == 0) || (bytesFile[j + 14] == 117 && bytesFile[j + 15] == 2 && bytesFile[j + 16] == 0 && bytesFile[j + 17] == 0) || (bytesFile[j + 14] == 117 && bytesFile[j + 15] == 2 && bytesFile[j + 16] == 253 && bytesFile[j + 17] == 4) || (bytesFile[j + 14] == 79 && bytesFile[j + 15] == 0 && bytesFile[j + 16] == 0 && bytesFile[j + 17] == 0)))
                             {
+                                int ctdalength = BitConverter.ToInt16(bytesFile, j + 4);
                                 if (parse)
                                 {
                                     byte[] bytesBuffer = new byte[4];
-                                    Buffer.BlockCopy(bytesFile, j + 22, bytesBuffer, 0, 4);
+                                    if (eighteen)
+                                    {
+                                        Buffer.BlockCopy(bytesFile, j + 18, bytesBuffer, 0, 4);
+                                    }
+                                    else
+                                    {
+                                        Buffer.BlockCopy(bytesFile, j + 22, bytesBuffer, 0, 4);
+                                    }
                                     File.WriteAllBytes(Path.Combine(pathOrig, "CTDA " + ID + " " + length + " " + ctda), bytesBuffer);
                                     bytesBuffer = null;
                                 }
-                                else if (bytesFile[j + 22] == 0 && bytesFile[j + 23] == 0 && bytesFile[j + 24] == 0 && bytesFile[j + 25] == 0)
+                                else if (bytesFile[j + 22] == 0 && bytesFile[j + 23] == 0 && bytesFile[j + 24] == 0 && bytesFile[j + 25] == 0 || (eighteen && (bytesFile[j + 18] == 0 && bytesFile[j + 19] == 0 && bytesFile[j + 20] == 0 && bytesFile[j + 21] == 0)))
                                 {
                                     if (bytesFile[j + 14] == 79 && bytesFile[j + 15] == 0 && bytesFile[j + 16] == 0 && bytesFile[j + 17] == 0 && bytesFile[j + 38] == 67 && bytesFile[j + 39] == 73 && bytesFile[j + 40] == 83 && bytesFile[j + 41] == 50)
                                     {
@@ -204,14 +209,21 @@ namespace Nifscan
                                             fileSize -= cis2;
                                             length -= cis2;
                                             count -= cis2;
-                                            replaceBytesInFile(i + 4, BitConverter.GetBytes(length - 24));
+                                            replaceBytesInFile(i + 4, BitConverter.GetBytes(length));
                                             replaceBytesInFile(gpackStart, BitConverter.GetBytes(BitConverter.ToInt32(bytesFile, gpackStart) - cis2));
                                         }
                                     }
                                     if (File.Exists(Path.Combine(pathOrig, "CTDA " + ID + " " + length + " " + ctda)))
                                     {
                                         byte[] bytesRead = File.ReadAllBytes(Path.Combine(pathOrig, "CTDA " + ID + " " + length + " " + ctda));
-                                        replaceBytesInFile(j + 22, bytesRead);
+                                        if (eighteen)
+                                        {
+                                            replaceBytesInFile(j + 18, bytesRead);
+                                        }
+                                        else
+                                        {
+                                            replaceBytesInFile(j + 22, bytesRead);
+                                        }
                                         bytesRead = null;
                                         changed = true;
                                     }
@@ -220,7 +232,7 @@ namespace Nifscan
                                         MessageBox.Show("File: " + file + " have broken CTDA in form: " + ID + " and not found original data: " + Path.Combine(pathOrig, "CTDA " + ID + " " + length + " " + ctda));
                                     }
                                 }
-                                j += 25;
+                                j += ctdalength - 1;
                                 ctda++;
                             }
                         }

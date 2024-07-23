@@ -25,6 +25,7 @@ namespace Nifscan
         {
             FormMain.verX = checkBox1.Checked;
             numericUpDown1.Enabled = checkBox1.Checked;
+            checkBox2.Enabled = checkBox1.Checked;
             changeButton();
         }
 
@@ -42,6 +43,7 @@ namespace Nifscan
         {
             FormMain.verY = checkBox3.Checked;
             numericUpDown2.Enabled = checkBox3.Checked;
+            checkBox4.Enabled = checkBox3.Checked;
             changeButton();
         }
 
@@ -59,6 +61,7 @@ namespace Nifscan
         {
             FormMain.verZ = checkBox5.Checked;
             numericUpDown3.Enabled = checkBox5.Checked;
+            checkBox6.Enabled = checkBox5.Checked;
             changeButton();
         }
 
