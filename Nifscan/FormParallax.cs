@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Nifscan
+namespace NifScan
 {
     public partial class FormParallax : Form
     {

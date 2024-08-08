@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Forms;
 
-namespace Nifscan
+namespace NifScan
 {
     public partial class FormSpec : Form
     {

@@ -5,7 +5,7 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Nifscan
+namespace NifScan
 {
     public partial class FormMain : Form
     {
@@ -940,6 +940,7 @@ namespace Nifscan
                                         long shaderFlags1 = BitConverter.ToUInt32(bytesFile, jump3);
                                         bool hasCastShadowFlag = ((ShadeFlags1)shaderFlags1 & ShadeFlags1.SLSF1_Cast_Shadows) != 0;
                                         bool hasDecalFlag = ((ShadeFlags1)shaderFlags1 & ShadeFlags1.SLSF1_Decal) != 0;
+                                        bool hasDynDecalFlag = ((ShadeFlags1)shaderFlags1 & ShadeFlags1.SLSF1_Dynamic_Decal) != 0;
                                         bool hasEnvMapFlag = ((ShadeFlags1)shaderFlags1 & ShadeFlags1.SLSF1_Environment_Mapping) != 0;
                                         bool hasEyeEnvMapFlag = ((ShadeFlags1)shaderFlags1 & ShadeFlags1.SLSF1_Eye_Environment_Mapping) != 0;
                                         bool hasParallaxFlag = ((ShadeFlags1)shaderFlags1 & ShadeFlags1.SLSF1_Parallax) != 0;
@@ -1058,9 +1059,18 @@ namespace Nifscan
                                         else if (parallaxRemove && (bytesFile[realBlockStart] == 3 || hasParallaxFlag))
                                         {
                                             bytesFile[realBlockStart] = 0;
-                                            shaderFlags1 -= 2048;
+                                            if (hasParallaxFlag)
+                                            {
+                                                shaderFlags1 -= 2048;
+                                                replaceBytesInFile(jump3, BitConverter.GetBytes(shaderFlags1));
+                                                hasParallaxFlag = false;
+                                            }
+                                        }
+                                        if (checkBox4.Checked && bytesFile[realBlockStart] == 3 && hasPTexture && !hasParallaxFlag)
+                                        {
+                                            shaderFlags1 += 2048;
                                             replaceBytesInFile(jump3, BitConverter.GetBytes(shaderFlags1));
-                                            hasParallaxFlag = false;
+                                            hasParallaxFlag = true;
                                         }
                                         if (((bytesFile[realBlockStart] == 3 && !hasParallaxFlag) || (bytesFile[realBlockStart] != 3 && hasParallaxFlag)) || ((bytesFile[realBlockStart] == 3 && hasParallaxFlag && (!hasPTexture || !hasVColors || !hasNormals || !hasTangents || skinBlock != -1))) || (hasPTexture && (bytesFile[realBlockStart] != 3 || !hasParallaxFlag)))
                                         {
@@ -1090,6 +1100,19 @@ namespace Nifscan
                                             else
                                             {
                                                 outLog.Add("WARNING! USELESS ALPHA FLAG IN TREE: " + blocksNamesList[i] + " (" + i + ") " + fileName);
+                                            }
+                                        }
+                                        if (hasDecalFlag && hasDynDecalFlag)
+                                        {
+                                            if (checkBox4.Checked)
+                                            {
+                                                shaderFlags1 -= 134217728;
+                                                replaceBytesInFile(jump3, BitConverter.GetBytes(shaderFlags1));
+                                                hasDynDecalFlag = false;
+                                            }
+                                            else
+                                            {
+                                                outLog.Add("WARNING! DOUBLE DECAL FLAGS: " + blocksNamesList[i] + " (" + i + ") " + fileName);
                                             }
                                         }
                                         if ((checkBox7.Checked || checkBox8.Checked) && comboBox1.SelectedIndex != -1)
@@ -1148,6 +1171,12 @@ namespace Nifscan
                                         bool hasGlowFlag = ((ShadeFlags2)shaderFlags2 & ShadeFlags2.SLSF2_Glow_Map) != 0;
                                         bool hasSoftLightingFlag = ((ShadeFlags2)shaderFlags2 & ShadeFlags2.SLSF2_Soft_Lighting) != 0;
                                         bool hasVCFlag = ((ShadeFlags2)shaderFlags2 & ShadeFlags2.SLSF2_Vertex_Colors) != 0;
+                                        if (checkBox4.Checked && bytesFile[realBlockStart] == 3 && hasPTexture && !hasVCFlag)
+                                        {
+                                            shaderFlags2 += 32;
+                                            replaceBytesInFile(jump3, BitConverter.GetBytes(shaderFlags2));
+                                            hasVCFlag = true;
+                                        }
                                         if (hasVColors && vcRemove && vcEmpty && bytesFile[realBlockStart] != 3 && bytesFile[realBlockStart] >= 0 && bytesFile[realBlockStart] <= 6)
                                         {
                                             if (hasVCFlag)

@@ -5,7 +5,7 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Nifscan
+namespace NifScan
 {
     public partial class FormES : Form
     {
@@ -39,7 +39,7 @@ namespace Nifscan
                 {
                     if (File.Exists(Path.Combine(pathOrig, line)))
                     {
-                        processFix(Path.Combine(pathOrig, line), true);
+                        processCTDA(Path.Combine(pathOrig, line), true);
                     }
                 }
             }
@@ -49,7 +49,21 @@ namespace Nifscan
                 {
                     if (line.EndsWith(".esm", StringComparison.OrdinalIgnoreCase) || line.EndsWith(".esp", StringComparison.OrdinalIgnoreCase))
                     {
-                        processFix(line);
+                        processCTDA(line);
+                    }
+                }
+            }
+        }
+
+        void button3_Click(object sender, EventArgs e)
+        {
+            if (Directory.Exists(pathData))
+            {
+                foreach (string line in Directory.EnumerateFiles(pathData))
+                {
+                    if (line.EndsWith(".esm", StringComparison.OrdinalIgnoreCase) || line.EndsWith(".esp", StringComparison.OrdinalIgnoreCase))
+                    {
+                        processResort(line);
                     }
                 }
             }
@@ -149,7 +163,7 @@ namespace Nifscan
             bytesFile = null;
         }
 
-        void processFix(string file, bool parse = false)
+        void processCTDA(string file, bool parse = false)
         {
             int gpackStart = 0;
             bool packFound = false;
@@ -245,6 +259,47 @@ namespace Nifscan
                 File.WriteAllBytes(file, bytesFile);
             }
             bytesFile = null;
+        }
+
+        void processResort(string file)
+        {
+            bytesFile = File.ReadAllBytes(file);
+            int fileSize = bytesFile.Length;
+            for (int i = 0; i < fileSize; i++)
+            {
+                if (bytesFile[i] == 71 && bytesFile[i + 1] == 82 && bytesFile[i + 2] == 85 && bytesFile[i + 3] == 80 && !(bytesFile[i + 8] == 87 && bytesFile[i + 9] == 82 && bytesFile[i + 10] == 76 && bytesFile[i + 11] == 68) && !(bytesFile[i + 8] == 68 && bytesFile[i + 9] == 73 && bytesFile[i + 10] == 65 && bytesFile[i + 11] == 76) && bytesFile[i + 8] == bytesFile[i + 24] && bytesFile[i + 9] == bytesFile[i + 25] && bytesFile[i + 10] == bytesFile[i + 26] && bytesFile[i + 11] == bytesFile[i + 27] && bytesFile[i + 48] == 69 && bytesFile[i + 49] == 68 && bytesFile[i + 50] == 73 && bytesFile[i + 51] == 68)
+                {
+                    int lengthGroup = BitConverter.ToInt32(bytesFile, i + 4);
+                    byte[] bytesGroup = new byte[lengthGroup];
+                    Buffer.BlockCopy(bytesFile, i, bytesGroup, 0, lengthGroup);
+                    List<byte[]> formsList = new List<byte[]>();
+                    for (int j = 24; j < lengthGroup; j++)
+                    {
+                        int length = BitConverter.ToInt32(bytesGroup, j + 4) + 24;
+                        byte[] bytesForm = new byte[length];
+                        Buffer.BlockCopy(bytesGroup, j, bytesForm, 0, length);
+                        formsList.Add(bytesForm);
+                        j += length - 1;
+                    }
+                    byte[] bytesBuffer = new byte[lengthGroup];
+                    Buffer.BlockCopy(bytesGroup, 0, bytesBuffer, 0, 24);
+                    bytesGroup = null;
+                    int offset = 24;
+                    int count = formsList.Count - 1;
+                    for (int j = count; 0 <= j; j--)
+                    {
+                        int length = formsList[j].Length;
+                        Buffer.BlockCopy(formsList[j], 0, bytesBuffer, offset, length);
+                        offset += length;
+                    }
+                    for (int j = 0; j < lengthGroup; j++)
+                    {
+                        bytesFile[i + j] = bytesBuffer[j];
+                    }
+                    i += lengthGroup - 1;
+                }
+            }
+            File.WriteAllBytes(file, bytesFile);
         }
 
         void replaceBytesInFile(int start, byte[] array)

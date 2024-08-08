@@ -1,4 +1,4 @@
-﻿namespace Nifscan
+﻿namespace NifScan
 {
     partial class FormVer
     {

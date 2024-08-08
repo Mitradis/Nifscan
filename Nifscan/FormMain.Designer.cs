@@ -1,4 +1,4 @@
-﻿namespace Nifscan
+﻿namespace NifScan
 {
     partial class FormMain
     {
@@ -488,7 +488,7 @@
             this.MaximizeBox = false;
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Nifscan";
+            this.Text = "NifScan";
             this.ResumeLayout(false);
             this.PerformLayout();
 
